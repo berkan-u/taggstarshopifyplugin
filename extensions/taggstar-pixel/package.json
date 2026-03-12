@@ -1,0 +1,11 @@
+{
+    "name": "taggstar-pixel",
+    "private": true,
+    "version": "1.0.0",
+    "dependencies": {
+        "@shopify/web-pixels-extension": "^0.4.1"
+    },
+    "scripts": {
+        "build": "echo 'build script not required for standard pixels'"
+    }
+}

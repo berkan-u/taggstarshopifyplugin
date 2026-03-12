@@ -1,0 +1,15 @@
+api_version = "2024-10"
+
+[[extensions]]
+name = "taggstar-pixel"
+handle = "taggstar-pixel"
+uid = "7f530d7f-cf7e-bfc8-60d0-c8d1ff8c4850"
+type = "web_pixel"
+description = "Taggstar Conversion Tracking Pixel"
+runtime_context = "strict"
+
+[extensions.settings]
+type = "object"
+
+[extensions.settings.fields]
+# Configured via the main app dashboard

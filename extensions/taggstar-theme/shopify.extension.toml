@@ -1,0 +1,7 @@
+api_version = "2024-10"
+
+[[extensions]]
+name = "taggstar-theme"
+handle = "taggstar-theme"
+uid = "910f4202-04ba-b246-3783-7703108a8922"
+type = "theme"

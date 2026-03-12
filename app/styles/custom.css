@@ -1,0 +1,87 @@
+
+.taggstar-admin-container {
+  background-color: #0070ff;
+  min-height: 100vh;
+  color: white !important;
+  padding: 40px 20px;
+}
+
+.taggstar-card {
+  background-color: #0070ff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+  border-radius: 12px !important;
+  padding: 30px !important;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.taggstar-card h2, 
+.taggstar-card label {
+  color: white !important;
+}
+
+.taggstar-logo {
+  width: auto;
+  height: 60px;
+  margin-bottom: 20px;
+  object-fit: contain;
+}
+
+.taggstar-button {
+  background: white !important;
+  color: #0070ff !important;
+  border: none !important;
+  font-weight: 600 !important;
+  margin-top: 10px !important;
+  transition: all 0.2s ease !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.taggstar-button:hover {
+  transform: translateY(-2px) !important;
+  background: #f0f0f0 !important;
+}
+
+.taggstar-button.saved {
+  background: #ffffff !important;
+  color: #0070ff !important;
+}
+
+.tick-icon {
+  color: #2e7d32 !important; /* Green tick color */
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+/* Override Polaris TextField colors for dark background */
+.taggstar-card .Polaris-TextField__Input {
+  color: black !important; /* Changed to black as requested */
+  background: white !important; /* Use white background for black text contrast */
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.taggstar-card .Polaris-TextField__Input::placeholder {
+  color: #999 !important;
+}
+
+.taggstar-card .Polaris-TextField__Input,
+.taggstar-card .Polaris-Select__Input,
+.taggstar-card .Polaris-Select__Content,
+.taggstar-card .Polaris-Select__SelectedOption {
+  color: black !important;
+  background: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.taggstar-card .Polaris-Select__Icon {
+  fill: #666 !important;
+}
+
+.taggstar-card label {
+  font-weight: 500 !important;
+  margin-bottom: 4px !important;
+}
