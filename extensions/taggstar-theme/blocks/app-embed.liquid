@@ -2,7 +2,34 @@
 {% assign taggstar_sitekey = shop.metafields.taggstar.sitekey %}
 {% assign taggstar_region = shop.metafields.taggstar.region | default: "emea" %}
 
-{% if taggstar_account != blank and taggstar_sitekey != blank %}
+{% assign enable_category = shop.metafields.taggstar.enable_category %}
+{% assign enable_pdp = shop.metafields.taggstar.enable_pdp %}
+{% assign enable_basket = shop.metafields.taggstar.enable_basket %}
+{% assign enable_conversion = shop.metafields.taggstar.enable_conversion %}
+
+{% assign show_tag = false %}
+
+{% if enable_category == true %}
+  {% if template.name == 'collection' or template.name == 'search' %}
+    {% assign show_tag = true %}
+  {% endif %}
+{% endif %}
+
+{% if enable_pdp == true and template.name == 'product' %}
+  {% assign show_tag = true %}
+{% endif %}
+
+{% if enable_basket == true and template.name == 'cart' %}
+  {% assign show_tag = true %}
+{% endif %}
+
+{% if enable_conversion == true %}
+  {% if request.page_type == 'checkout' or template.name == 'checkout' %}
+    {% assign show_tag = true %}
+  {% endif %}
+{% endif %}
+
+{% if show_tag and taggstar_account != blank and taggstar_sitekey != blank %}
   {% if taggstar_region == "us" %}
     <script type="text/javascript">
     (function(w, d, k, s, r) {

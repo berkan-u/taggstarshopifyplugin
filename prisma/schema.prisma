@@ -37,8 +37,12 @@ model Configuration {
   id            Int      @id @default(autoincrement())
   shop          String   @unique
   accountNumber String?
-  siteKey       String?
-  region        String?  @default("emea")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  siteKey         String?
+  region          String?  @default("emea")
+  enableCategory  Boolean  @default(false)
+  enablePDP       Boolean  @default(false)
+  enableBasket    Boolean  @default(false)
+  enableConversion Boolean @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

@@ -10,6 +10,7 @@ import {
   TextField,
   FormLayout,
   Select,
+  Checkbox,
 } from "@shopify/polaris";
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
 import { authenticate } from "../shopify.server";
@@ -31,6 +32,10 @@ export const loader = async ({ request }: LoaderFunctionArgs) => {
     accountNumber: config?.accountNumber || "",
     siteKey: config?.siteKey || "",
     region: config?.region || "emea",
+    enableCategory: config?.enableCategory || false,
+    enablePDP: config?.enablePDP || false,
+    enableBasket: config?.enableBasket || false,
+    enableConversion: config?.enableConversion || false,
   });
 };
 
@@ -41,11 +46,15 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const accountNumber = String(formData.get("accountNumber") || "");
   const siteKey = String(formData.get("siteKey") || "");
   const region = String(formData.get("region") || "emea");
+  const enableCategory = formData.get("enableCategory") === "true";
+  const enablePDP = formData.get("enablePDP") === "true";
+  const enableBasket = formData.get("enableBasket") === "true";
+  const enableConversion = formData.get("enableConversion") === "true";
 
   await prisma.configuration.upsert({
     where: { shop: session.shop },
-    update: { accountNumber, siteKey, region },
-    create: { shop: session.shop, accountNumber, siteKey, region },
+    update: { accountNumber, siteKey, region, enableCategory, enablePDP, enableBasket, enableConversion },
+    create: { shop: session.shop, accountNumber, siteKey, region, enableCategory, enablePDP, enableBasket, enableConversion },
   });
 
   const shopQuery = await admin.graphql(`query { shop { id } }`);
@@ -64,6 +73,10 @@ export const action = async ({ request }: ActionFunctionArgs) => {
           { ownerId: shopId, namespace: "taggstar", key: "account_number", value: accountNumber, type: "single_line_text_field" },
           { ownerId: shopId, namespace: "taggstar", key: "sitekey", value: siteKey, type: "single_line_text_field" },
           { ownerId: shopId, namespace: "taggstar", key: "region", value: region, type: "single_line_text_field" },
+          { ownerId: shopId, namespace: "taggstar", key: "enable_category", value: String(enableCategory), type: "boolean" },
+          { ownerId: shopId, namespace: "taggstar", key: "enable_pdp", value: String(enablePDP), type: "boolean" },
+          { ownerId: shopId, namespace: "taggstar", key: "enable_basket", value: String(enableBasket), type: "boolean" },
+          { ownerId: shopId, namespace: "taggstar", key: "enable_conversion", value: String(enableConversion), type: "boolean" },
         ],
       },
     }
@@ -82,11 +95,19 @@ export default function Index() {
   const [accountNumber, setAccountNumber] = useState(loaderData.accountNumber);
   const [siteKey, setSiteKey] = useState(loaderData.siteKey);
   const [region, setRegion] = useState(loaderData.region);
+  const [enableCategory, setEnableCategory] = useState(loaderData.enableCategory);
+  const [enablePDP, setEnablePDP] = useState(loaderData.enablePDP);
+  const [enableBasket, setEnableBasket] = useState(loaderData.enableBasket);
+  const [enableConversion, setEnableConversion] = useState(loaderData.enableConversion);
   const [isSaved, setIsSaved] = useState(false);
 
   const handleAccountNumberChange = useCallback((value: string) => { setAccountNumber(value); setIsSaved(false); }, []);
   const handleSiteKeyChange = useCallback((value: string) => { setSiteKey(value); setIsSaved(false); }, []);
   const handleRegionChange = useCallback((value: string) => { setRegion(value); setIsSaved(false); }, []);
+  const handleCategoryChange = useCallback((value: boolean) => { setEnableCategory(value); setIsSaved(false); }, []);
+  const handlePDPChange = useCallback((value: boolean) => { setEnablePDP(value); setIsSaved(false); }, []);
+  const handleBasketChange = useCallback((value: boolean) => { setEnableBasket(value); setIsSaved(false); }, []);
+  const handleConversionChange = useCallback((value: boolean) => { setEnableConversion(value); setIsSaved(false); }, []);
 
   const isLoading = navigation.state === "submitting";
 
@@ -98,7 +119,15 @@ export default function Index() {
   }, [actionData, shopify]);
 
   const handleSave = () => {
-    submit({ accountNumber, siteKey, region }, { method: "post" });
+    submit({ 
+      accountNumber, 
+      siteKey, 
+      region,
+      enableCategory: String(enableCategory),
+      enablePDP: String(enablePDP),
+      enableBasket: String(enableBasket),
+      enableConversion: String(enableConversion)
+    }, { method: "post" });
   };
 
   const regionOptions = [
@@ -145,6 +174,39 @@ export default function Index() {
                       value={region}
                       disabled={isLoading}
                     />
+                    
+                    <div style={{ marginTop: '16px' }}>
+                      <Text as="h3" variant="headingMd">Where should the JS tag fire?</Text>
+                      <div style={{ marginTop: '8px' }}>
+                        <BlockStack gap="200">
+                          <Checkbox
+                            label="Category Pages (PLP & Search)"
+                            checked={enableCategory}
+                            onChange={handleCategoryChange}
+                            disabled={isLoading}
+                          />
+                          <Checkbox
+                            label="Product Display Pages (PDP)"
+                            checked={enablePDP}
+                            onChange={handlePDPChange}
+                            disabled={isLoading}
+                          />
+                          <Checkbox
+                            label="Basket Page (Cart)"
+                            checked={enableBasket}
+                            onChange={handleBasketChange}
+                            disabled={isLoading}
+                          />
+                          <Checkbox
+                            label="Conversion Page (Order Confirmation)"
+                            checked={enableConversion}
+                            onChange={handleConversionChange}
+                            disabled={isLoading}
+                          />
+                        </BlockStack>
+                      </div>
+                    </div>
+
                     <div style={{ marginTop: '20px', display: 'flex', justifyContent: 'center' }}>
                       <button 
                         onClick={handleSave} 
