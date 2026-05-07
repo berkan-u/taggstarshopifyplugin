@@ -1,19 +1,19 @@
 # Learn more about configuring your app at https://shopify.dev/docs/apps/tools/cli/configuration
 
 client_id = "2203b1345f36537615b15602da50a9d1"
-name = "Taggstar Social Proof Plugin"
-application_url = "https://centres-typically-rental-attach.trycloudflare.com"
+name = "taggstar social proof plugin"
+application_url = "https://award-mel-petersburg-endif.trycloudflare.com"
 embedded = true
 
 [build]
 automatically_update_urls_on_dev = true
 
 [webhooks]
-api_version = "2025-04"
+api_version = "2024-10"
 
   [[webhooks.subscriptions]]
   topics = [ "orders/create" ]
-  uri = "/webhooks/orders/create"
+  uri = "/api/webhooks"
 
 [access_scopes]
 # Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
@@ -21,10 +21,10 @@ scopes = "read_customer_events,read_orders,read_pixels,write_pixels,write_produc
 
 [auth]
 redirect_urls = [
-  "https://centres-typically-rental-attach.trycloudflare.com/api/auth"
+  "https://award-mel-petersburg-endif.trycloudflare.com/api/auth"
 ]
 
 [app_proxy]
-url = "https://centres-typically-rental-attach.trycloudflare.com"
+url = "https://award-mel-petersburg-endif.trycloudflare.com"
 subpath = "taggstar"
 prefix = "apps"
