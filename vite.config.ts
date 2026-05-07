@@ -39,7 +39,7 @@ if (host === "localhost") {
 
 export default defineConfig({
   server: {
-    allowedHosts: [host],
+    allowedHosts: [host, "award-mel-petersburg-endif.trycloudflare.com"],
     cors: {
       preflightContinue: true,
     },

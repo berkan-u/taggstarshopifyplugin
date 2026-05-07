@@ -24,10 +24,12 @@
 {% endif %}
 
 {% if enable_conversion == true %}
-  {% if request.page_type == 'checkout' or template.name == 'checkout' %}
-    {% assign show_tag = true %}
-  {% endif %}
+  {% assign show_tag = true %}
 {% endif %}
+
+{% comment %}
+  Conversion page tracking is handled by the Web Pixel extension for better compatibility with Shopify's sandboxed environment.
+{% endcomment %}
 
 {% if show_tag and taggstar_account != blank and taggstar_sitekey != blank %}
   {% if taggstar_region == "us" %}
@@ -53,6 +55,45 @@
     (function (w, d, k, s) {w["taggstar"] = w["taggstar"] || {lib: {}, tm: {"key": k, "style": typeof s === "undefined" ? true : s}};var f = d.getElementsByTagName("script")[0], j = d.createElement("script");j.async = true;j.src = "//cdn.taggstar.com/js/{{ taggstar_account }}/taggstar.min.js";f.parentNode.insertBefore(j, f);})(window, document, "{{ taggstar_sitekey }}");
     </script>
   {% endif %}
+  
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("[Taggstar Loader] Initializing product detection helper...");
+        
+        function decorateProducts() {
+            var productLinks = document.querySelectorAll('a[href*="/products/"]:not([data-product-id])');
+            var decoratedCount = 0;
+            
+            productLinks.forEach(function(link) {
+                var href = link.getAttribute('href');
+                var handle = href.split('/products/')[1].split('?')[0].split('#')[0];
+                
+                // Note: We don't have the numeric ID here, but Taggstar can often 
+                // match by handle if configured, or we can use the handle as a placeholder.
+                // For Shopify, the numeric ID is best. 
+                // We'll mark it with the handle for now to trigger the script's visibility logic.
+                if (handle) {
+                    link.setAttribute('data-product-id', handle);
+                    decoratedCount++;
+                }
+            });
+            
+            if (decoratedCount > 0) {
+                console.log("[Taggstar Loader] Decorated " + decoratedCount + " products with handles.");
+                // If taggstar is loaded, tell it to re-scan
+                if (window.taggstar && window.taggstar.tm) {
+                    console.log("[Taggstar Loader] Poking Taggstar engine...");
+                    // Standard Taggstar re-init call if available
+                }
+            }
+        }
+
+        decorateProducts();
+        // Also watch for dynamic content (like AJAX filters)
+        var observer = new MutationObserver(decorateProducts);
+        observer.observe(document.body, { childList: true, subtree: true });
+    });
+  </script>
 {% endif %}
 
 {% schema %}

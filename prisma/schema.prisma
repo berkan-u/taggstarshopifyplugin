@@ -1,13 +1,7 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
 
-// Note that some adapters may set a maximum length for the String type by default, please ensure your strings are long
-// enough when changing adapters.
-// See https://www.prisma.io/docs/orm/reference/prisma-schema-reference#string for more information
 datasource db {
   provider = "sqlite"
   url      = "file:dev.sqlite"
@@ -34,15 +28,29 @@ model Session {
 }
 
 model Configuration {
-  id            Int      @id @default(autoincrement())
-  shop          String   @unique
-  accountNumber String?
-  siteKey         String?
-  region          String?  @default("emea")
-  enableCategory  Boolean  @default(false)
-  enablePDP       Boolean  @default(false)
-  enableBasket    Boolean  @default(false)
-  enableConversion Boolean @default(false)
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  id               Int      @id @default(autoincrement())
+  shop             String   @unique
+  accountNumber    String?
+  siteKey          String?
+  region           String?  @default("emea")
+  authEnabled      Boolean  @default(false)
+  accessKey        String?
+  secretKey        String?
+  pixelSecret      String?
+  enableCategory   Boolean  @default(false)
+  enablePDP        Boolean  @default(false)
+  enableBasket     Boolean  @default(false)
+  enableConversion Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model DiagnosticLog {
+  id               Int      @id @default(autoincrement())
+  shop             String
+  orderId          String   @unique
+  requestPayload   String
+  responseBody     String
+  status           Int
+  createdAt        DateTime @default(now())
 }

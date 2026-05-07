@@ -1,9 +1,10 @@
-api_version = "2024-10"
+api_version = "2024-04"
 
 [[extensions]]
 name = "taggstar-pixel"
 handle = "taggstar-pixel"
-uid = "7f530d7f-cf7e-bfc8-60d0-c8d1ff8c4850"
+# uid = "7f530d7f-cf7e-bfc8-60d0-c8d1ff8c4850"
+uid = "7f530d7f-cf7e-bfc8-60d0-c8d1ff8c4850d8d340ea"
 type = "web_pixel"
 description = "Taggstar Conversion Tracking Pixel"
 runtime_context = "strict"
@@ -11,5 +12,37 @@ runtime_context = "strict"
 [extensions.settings]
 type = "object"
 
-[extensions.settings.fields]
-# Configured via the main app dashboard
+[extensions.settings.fields.account_number]
+name = "Account Number"
+description = "Taggstar account number"
+type = "single_line_text_field"
+
+[extensions.settings.fields.sitekey]
+name = "Sitekey"
+description = "Taggstar sitekey"
+type = "single_line_text_field"
+
+[extensions.settings.fields.region]
+name = "Region"
+description = "Taggstar region (emea or us)"
+type = "single_line_text_field"
+
+[extensions.settings.fields.enable_conversion]
+name = "Enable Conversion"
+description = "Whether the JS tag should fire on the conversion page"
+type = "single_line_text_field"
+
+[extensions.settings.fields.appUrl]
+name = "Application URL"
+description = "The Shopify App backend URL used as the REST API proxy for conversion tracking"
+type = "single_line_text_field"
+
+[extensions.settings.fields.pixelSecret]
+name = "Pixel Shared Secret"
+description = "A cryptographic secret used to authenticate pixel POST requests to the REST proxy"
+type = "single_line_text_field"
+
+[extensions.settings.fields.auth_enabled]
+name = "Authentication Enabled"
+description = "Whether to use HMAC signatures and the authenticated endpoint"
+type = "single_line_text_field"

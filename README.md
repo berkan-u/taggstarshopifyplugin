@@ -59,11 +59,16 @@ To show Taggstar messages on your store, you must enable the App Embed:
 
 ## Tracking
 
-The plugin automatically tracks conversions when a customer completes a checkout. It sends the following data to Taggstar:
-- Order ID
-- Revenue
-- Currency
-- Product IDs and Prices
+The plugin uses a **Hybrid "XHR-First" Strategy** for maximum reliability:
+1. **Direct XHR**: The Web Pixel first attempts a direct `fetch` from the customer's browser to the Taggstar Public API.
+2. **REST Proxy Fallback**: If the direct request is blocked by CORS or sandbox restrictions, it automatically routes through a backend Remix Proxy (`/api/conversion`).
+3. **Webhook Fallback**: As a final safety net, a Shopify `orders/create` webhook is registered to capture any missing conversions server-side.
+
+### Payload Specification
+The plugin maps Shopify checkout data to Taggstar's V2 Nested API format:
+- **Visitor Context**: Nested `id` and `sessionId`.
+- **Order Details**: `id`, `totalPrice`, `currency`, and an `orderItems` array.
+- **Precision Tracking**: All monetary units are sent as strings (e.g., `"20.0"`) to meet Taggstar's exact validation requirements.
 
 ## Development
 

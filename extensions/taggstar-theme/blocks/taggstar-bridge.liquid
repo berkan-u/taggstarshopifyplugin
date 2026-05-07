@@ -1,0 +1,178 @@
+{% comment %}
+  Taggstar Cookie Bridge
+  Reads Taggstar session cookies and writes them to Shopify cart attributes
+  so they persist through checkout and appear in the orders/create webhook.
+{% endcomment %}
+<script>
+  (function() {
+    const PREFIX = '[TAGGSTAR_DEBUG]';
+    const DEBUG = true;
+    function log(msg, data) {
+      if (DEBUG) {
+        if (data !== undefined) {
+          console.log(`${PREFIX} ${msg}`, data);
+        } else {
+          console.log(`${PREFIX} ${msg}`);
+        }
+      }
+    }
+
+    log('Bridge script loaded. Page URL:', location.href);
+    
+    function getCookie(name) {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return null;
+    }
+
+    // Supports dynamic "Buy it now" checkouts which bypass global cart state
+    function attachHiddenInputsToForms(vid, ses, exps) {
+      const forms = document.querySelectorAll('form[action^="/cart/add"]');
+      log(`Found ${forms.length} cart/add form(s) on page.`);
+      forms.forEach((form, i) => {
+        // Name attributes must be in the format: attributes[name]
+        const inputs = {
+          'attributes[_taggstar_visitor_id]': vid,
+          'attributes[_taggstar_session_id]': ses,
+          'attributes[_taggstar_experiment_id]': exps
+        };
+
+        for (const [name, value] of Object.entries(inputs)) {
+          // Update or create hidden inputs
+          let input = form.querySelector(`input[name="${name}"]`);
+          if (!input) {
+            input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = name;
+            form.appendChild(input);
+          }
+          input.value = value;
+        }
+        log(`Form #${i}: Attached hidden inputs.`);
+      });
+    }
+
+    function syncCookiesToCart() {
+      const vid = getCookie('_taggstar_vid');
+      const ses = getCookie('_taggstar_ses');
+      const exps = getCookie('_taggstar_exps') || '';
+
+      log('Cookie read results:', { vid: vid || 'NOT_FOUND', ses: ses || 'NOT_FOUND', exps: exps || 'EMPTY' });
+
+      if (!vid || !ses) {
+        log('Cookies not ready yet. Will retry...');
+        return false; // Cookies not ready yet
+      }
+
+      // 1. Inject hidden inputs into forms to support "Buy it now" buttons natively
+      attachHiddenInputsToForms(vid, ses, exps);
+
+      // 2. Sync to global cart object for standard navigation
+      const lastSynced = sessionStorage.getItem('taggstar_bridge_synced');
+      const currentValues = `${vid}|${ses}|${exps}`;
+      if (lastSynced === currentValues) {
+        log('Cookies already bridged this session, skipping AJAX POST.');
+        return true; 
+      }
+
+      log('Bridging cookies to cart via /cart/update.js...', { vid, ses, exps });
+
+      fetch('/cart/update.js', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          attributes: {
+            '_taggstar_visitor_id': vid,
+            '_taggstar_session_id': ses,
+            '_taggstar_experiment_id': exps
+          }
+        })
+      })
+      .then(response => {
+        log(`/cart/update.js response status: ${response.status}`);
+        return response.json();
+      })
+      .then(cart => {
+        log('Cart attributes after update:', cart.attributes);
+        sessionStorage.setItem('taggstar_bridge_synced', currentValues);
+      })
+      .catch(error => {
+        console.error(`${PREFIX} Error updating cart:`, error);
+      });
+
+      return true;
+    }
+
+    let syncInterval;
+    
+    function attemptSync() {
+      const success = syncCookiesToCart();
+      if (success) {
+        // Stop checking once we've successfully bridged them
+        if (syncInterval) clearInterval(syncInterval);
+        document.removeEventListener('click', attemptSync);
+        log('Sync successful. Stopped polling.');
+      }
+    }
+
+    // Initial check when DOM is ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', attemptSync);
+    } else {
+      attemptSync();
+    }
+
+    // Keep checking periodically until successful (e.g. if GTM is delayed or requires consent)
+    syncInterval = setInterval(attemptSync, 3000);
+
+    // Also attempt syncing on any user interaction, ensuring we catch them before a cart update
+    document.addEventListener('click', attemptSync);
+
+    /**
+     * Diagnostic Viewer (For Developer Visibility)
+     */
+    setTimeout(() => {
+      log('Diagnostic Module Pulse. URL:', location.href);
+      const isOrderPage = location.pathname.includes('/thank_you') || location.pathname.includes('/orders/');
+      const checkout = window.Shopify?.checkout;
+      
+      log('Page State:', { isOrderPage, hasCheckout: !!checkout, checkoutKeys: checkout ? Object.keys(checkout) : [] });
+
+      if (isOrderPage || checkout) {
+        const orderId = checkout?.order_id || checkout?.id || location.pathname.split('/').pop();
+        log(`Targeting Order ID: ${orderId}`);
+
+        if (orderId && orderId.length > 5) {
+          log(`Triggering orderCopy fetch in 5s...`);
+          setTimeout(() => {
+            const fetchUrl = `/apps/taggstar/orderCopy?order_id=${orderId}`;
+            log(`Fetching diagnostic: ${fetchUrl}`);
+            fetch(fetchUrl)
+              .then(res => {
+                log(`Diagnostic fetch HTTP Status: ${res.status}`);
+                return res.json();
+              })
+              .then(data => log('Diagnostic Result:', data))
+              .catch(err => console.error(`${PREFIX} Diagnostic fetch error:`, err));
+          }, 5000);
+        } else {
+          log(`Order ID too short or missing: "${orderId}". Skipping diagnostic fetch.`);
+        }
+      } else {
+        log('Not an order/thank_you page. Diagnostic fetch skipped.');
+      }
+    }, 2000);
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Taggstar Cookie Bridge",
+  "target": "body",
+  "settings": []
+}
+{% endschema %}
