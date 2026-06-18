@@ -26,7 +26,7 @@ Once installed, you will be redirected to the Taggstar app dashboard within your
 - Enter your **Taggstar Account Number**.
 - Enter your **Sitekey**.
 - Select your **Region** (EMEA or US/RoW).
-- Select which pages you want the Taggstar script to load on (Category, Product Display, or Basket).
+- Select which pages you want the Taggstar script to load/track on (Category, Product Display, Basket, or Conversion Page).
 - Click **Save Settings**.
 
 ### 3. Enable the App Embed
