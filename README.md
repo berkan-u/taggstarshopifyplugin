@@ -1,4 +1,4 @@
-# Taggstar Social Proof for Shopify
+# Taggstar Conversion Tracking for Shopify
 
 Welcome to the official Taggstar Social Proof integration for Shopify. This app enables merchants to seamlessly integrate Taggstar's powerful social proof messaging and conversion tracking into their Shopify storefronts.
 
