@@ -14,9 +14,9 @@ This application is built with a **multi-tenant architecture**, meaning a single
 
 ---
 
-## 📦 For Merchants: How to Install & Configure
+## 📦 For Customers: How to Install & Configure
 
-If you are a merchant looking to add Taggstar to your store, follow these simple steps:
+If you are a customer looking to add Taggstar to your store, follow these simple steps:
 
 ### 1. Install the App
 Click the secure installation link provided by your Taggstar Account Manager. Follow the Shopify prompts to install the app on your store.
