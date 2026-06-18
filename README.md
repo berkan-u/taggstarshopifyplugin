@@ -77,6 +77,20 @@ To host this application for multiple clients, you must deploy it to a persisten
    ```
 4. **Update App URLs**: Once deployed, update the **App URL** and **Allowed redirection URL(s)** in your Shopify Partner Dashboard to match your new production domain.
 
+### Technology Stack
+
+*   **Framework:** Shopify App Framework built on **Remix** (a full-stack web framework).
+*   **Languages:** **TypeScript** (for type-safe backend logic) and **JavaScript** (for the Web Pixel and frontend logic).
+*   **Templating:** **Liquid** (Shopify's templating language, used for the Theme App Embed).
+*   **Frontend Library:** **React.js**.
+*   **Design System:** **Shopify Polaris** (Shopify's official UI library).
+*   **Backend & Server:** **Node.js** with **Vite** (build tool).
+*   **API Architecture:** RESTful APIs (via Remix routes) and Shopify Webhooks (`orders/create`).
+*   **Database ORM:** **Prisma**.
+*   **Database:** **SQLite** (Development) / **PostgreSQL** (Production).
+*   **Merchant Credentials:** Stored securely inside **Shopify Metafields**.
+*   **Shopify Extensions:** **Theme App Extension** (`app-embed.liquid`) and **Web Pixel Extension** (`taggstar-pixel`).
+
 ## License
 
 MIT
