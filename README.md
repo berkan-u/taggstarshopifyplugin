@@ -50,7 +50,9 @@ This section details the underlying architecture and how to deploy the applicati
 The application is built using **Shopify Remix**, **Polaris UI**, and **Prisma ORM**.
 
 #### Multi-Tenant Data Isolation
-The app uses a PostgreSQL database (via Prisma) to store merchant settings. The database associates the merchant's `Account Number` and `Sitekey` with their unique Shopify store URL (`shop` domain). When a merchant configures the app, their specific credentials are automatically injected into their storefront and Web Pixel.
+The app uses **Shopify Metafields** to securely store merchant credentials (such as their specific `Account Number` and `Sitekey`) directly on their store (`shop` domain). When a merchant configures the app, their specific credentials are automatically injected into their storefront and Web Pixel.
+
+The app's own database (PostgreSQL via Prisma) is used purely for **Shopify Authentication Session Management** and the **Cookie/Webhook Bridge** logic to ensure conversions are accurately attributed.
 
 #### Hybrid Conversion Tracking
 To bypass ad-blockers and Shopify's strict Web Pixel sandbox, the app uses a **Hybrid "XHR-First" Strategy** for conversion tracking:
@@ -58,12 +60,12 @@ To bypass ad-blockers and Shopify's strict Web Pixel sandbox, the app uses a **H
 2. **REST Proxy Fallback**: If the direct request is blocked (e.g., by CORS), it automatically routes the payload through a secure backend Remix Proxy (`/api/conversion`).
 3. **Webhook Fallback**: As a final safety net, a Shopify `orders/create` webhook ensures no conversion is missed.
 
-### Deployment Instructions (AWS)
+### 🛑 Deployment Instructions (AWS) - For Taggstar Internal Technical Team Only
 
 To host this application for multiple clients, you must deploy it to a persistent server. We recommend **AWS App Runner** and **AWS RDS (PostgreSQL)**.
 
 1. **Database Setup**: Provision a PostgreSQL database. Ensure you have the connection string.
-2. **App Environment Variables**: Configure the following environment variables in your hosting provider:
+2. **App Environment Variables**: Configure the following environment variables in your hosting provider. *(Note: You can find `SHOPIFY_API_KEY` and `SHOPIFY_API_SECRET` in your Shopify Partner Dashboard under Apps > Your App Name > API keys. For local development, these are located in the `.env` file).*
    - `SHOPIFY_API_KEY`: Your Shopify Partner App Client ID.
    - `SHOPIFY_API_SECRET`: Your Shopify Partner App Client Secret.
    - `SCOPES`: `read_customer_events,read_orders,read_pixels,write_pixels,write_products`
