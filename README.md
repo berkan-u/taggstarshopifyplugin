@@ -8,9 +8,9 @@ This application is built with a **multi-tenant architecture**, meaning a single
 
 ## 🚀 What This App Does
 
-1. **Automated Script Injection**: Uses Shopify's Theme App Extensions (App Embeds) to safely inject the Taggstar JavaScript loader into the storefront without modifying core theme files.
-2. **Customizable Visibility**: Allows merchants to selectively enable Taggstar messaging on Category (PLP), Product (PDP), and Basket (Cart) pages directly from the app dashboard.
-3. **Robust Conversion Tracking**: Implements a highly reliable, hybrid tracking system to capture checkout events and attribute them to the correct visitor, even within Shopify's restrictive Web Pixel sandbox.
+1. **Main Purpose - Robust Conversion Tracking**: Implements a highly reliable, hybrid tracking system to capture checkout events and attribute them to the correct visitor, even within Shopify's restrictive Web Pixel sandbox.
+2. **(Optional) Automated Script Injection**: Uses Shopify's Theme App Extensions (App Embeds) to safely inject the Taggstar JavaScript loader into the storefront without modifying core theme files.
+3. **(Optional) Customizable Visibility**: Allows merchants to selectively enable Taggstar messaging on Category (PLP), Product (PDP), and Basket (Cart) pages directly from the app dashboard.
 
 ---
 
